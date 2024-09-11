@@ -1,4 +1,4 @@
-SCRIPT=JaredJohnstun_hw01-p1.py
+SCRIPT=JaredJohnstun_hw02-p2.py
 RUNDIR=run
 CMDLINE=
 HOME=${PWD}

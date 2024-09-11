@@ -12,13 +12,13 @@ v0 = 20 #initial velocity
 g = 9.8 #acceleration due to gravity (m/s^2)
 
 #define functions for x position, y position, and range of projectile
-def x(t,θ):
+def Xpos(t,θ):
     #convert θ from degrees to radians
     angle = np.deg2rad(θ)
     x = x0 + (v0*t*np.cos(angle))
     return x
 
-def y(t,θ):
+def Ypos(t,θ):
     #convert θ from degrees to radians
     angle = np.deg2rad(θ)
     y = y0 + ((v0*t)*(np.sin(angle))) - (0.5*g*(t*t))
@@ -34,7 +34,7 @@ def t_range(θ):
     #start from t = 0
     t = 0
     counter = 0
-    while y(t, θ) >= 0:
+    while Ypos(t, θ) >= 0:
         t +=0.05
         counter +=1
         continue
@@ -46,8 +46,11 @@ def t_range(θ):
 #Create First Plot
 θ_range = np.linspace(30, 60, 7)
 
+#Create subplot for zoomed in figure
+
 #Array of colors to iterate over when making graphs
 colors = ['magenta', 'r', 'y', 'g', 'c', 'b', 'purple']
+linestyles = ['solid', 'dotted', 'dashed', 'dashdot', ':', '-.', ' ']
 i=0 # pointer to Color array index
 for θ in θ_range:
     #generate range of t values
@@ -56,10 +59,10 @@ for θ in θ_range:
     curve_angle = str(θ)
     
     plt.plot(
-        x(t_in, θ), #Collection of x values for given t
-        y(t_in, θ), #Collection of y values for given t
+        Xpos(t_in, θ), #Collection of x values for given t
+        Ypos(t_in, θ), #Collection of y values for given t
         color = colors[i],
-        linestyle = "-",
+        linestyle = linestyles[i],
         label = "θ initial (deg) = " + curve_angle
 
     )
@@ -67,13 +70,12 @@ for θ in θ_range:
     i += 1
 
     #iterate through angles and plot Range values from Range Function
-    plt.plot(
+    range_plots = plt.plot(
         Range(θ), # given x value of plot
         0,
         markeredgecolor = "black",
         marker = "+"
     )
- 
 
 
 plt.xlabel('X-position (m)')
@@ -84,7 +86,12 @@ plt.xlim(0)
 plt.ylim(0)
 print("Showing plot window.")	
 print("Nothing else will happen until you close the plot window!")
-plt.savefig("Homework/Hw_2/JaredJohnstun_hw02-p3_image.pdf")
+plt.savefig("Homework/Hw_2/JaredJohnstun_hw02-p2_image.pdf")
+
+plt.title('Zoomed In Figure')
+plt.xlim(35, 45)
+plt.ylim(-0.01, .1)
+plt.savefig("Homework/Hw_2/JaredJohnstun_hw02-p2_zoom_image.pdf")
 plt.show()
 
 
