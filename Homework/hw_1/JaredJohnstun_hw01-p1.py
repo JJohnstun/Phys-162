@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 print("Python script has started.")
 print("Creating a simple plot...")
 plt.figure()
+
 #first plot with added values and other changes
 line_1 = plt.plot([1, 2, 3, 4, 5, 6, 7],	# list of x-values to plot
 	[1, 4, 2, 5, 8, 3, 5],  		# list of y-values to plot
@@ -22,6 +23,7 @@ line_2 = plt.plot( [1, 2, 3, 4, 5, 6, 7], #list of the x-values
     markeredgecolor = "red", #Symbol color
     label = "Orange Line"
 	)
+
 plt.xlabel('The X Axis')
 plt.ylabel('The Y Axis')
 plt.title('This is the plot title')
