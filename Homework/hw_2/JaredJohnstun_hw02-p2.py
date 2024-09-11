@@ -86,12 +86,12 @@ plt.xlim(0)
 plt.ylim(0)
 print("Showing plot window.")	
 print("Nothing else will happen until you close the plot window!")
-plt.savefig("Homework/Hw_2/JaredJohnstun_hw02-p2_image.pdf")
+plt.savefig("JaredJohnstun_hw02-p2_FigA.pdf")
 
 plt.title('Zoomed In Figure')
 plt.xlim(35, 45)
 plt.ylim(-0.01, .1)
-plt.savefig("Homework/Hw_2/JaredJohnstun_hw02-p2_zoom_image.pdf")
+plt.savefig("JaredJohnstun_hw02-p2_zoom_FigB.pdf")
 plt.show()
 
 
