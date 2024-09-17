@@ -43,23 +43,26 @@ def t_range(θ):
 #generate range of t values
 t_in = t_range(θ)
 #generate name of curve
-curve_angle = str(θ)
+curve_angle = str(f'θ ={θ0: .1f} \N{DEGREE SIGN}')
+initial_height = str(f'\nInitial Height = {y0: .1f} m')
+initial_velocity = str(f'\nInitial Velocity = {v0: .1f} m/s')
 
 plt.plot(
     Xpos(t_in, θ), #Collection of x values for given t
     Ypos(t_in, θ), #Collection of y values for given t
     color = 'purple',
     linestyle = '--',
-    label = "θ initial (deg) = " + curve_angle
+    label = curve_angle + initial_height + initial_velocity
 
 )
 
 plt.xlabel('X-position (m)')
 plt.ylabel('Y-position (m)')
-plt.title('Comparisons of x-y position and Range Functions')
+plt.title('Homework 3 Problem 2')
 plt.legend()
 plt.xlim(0)
 plt.ylim(0)
 print("Showing plot window.")	
 print("Nothing else will happen until you close the plot window!")
-plt.savefig("JaredJohnstun_hw02-p2_FigA.pdf")
+plt.savefig("JaredJohnstun_hw03-p2_fig.pdf")
+plt.show()
