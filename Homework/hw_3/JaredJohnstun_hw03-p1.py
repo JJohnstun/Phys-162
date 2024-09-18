@@ -2,6 +2,8 @@
 #Date: 9/16/2024
 import os
 
+name = input('Please enter your name: ')
+print("Hello " + name + "!")
 x = input("Please enter a number: ")
 x = float(x)
 y = input("Please enter a second number: ")
