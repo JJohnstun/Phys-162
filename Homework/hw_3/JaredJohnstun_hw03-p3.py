@@ -56,12 +56,17 @@ x_line = str(f'sum of array x is {x_sum: .2f} average = {x_average: .3f}')
 
 y_sum = np.sum(y)
 y_average = np.average(y)
-y_line = str(f'sum of array x is {y_sum: .2f} average = {y_average: .3f}')
+y_line = str(f'\nsum of array x is {y_sum: .2f} average = {y_average: .3f}')
 
 z_sum = np.sum(z)
 z_average = np.average(z)
-z_line = str(f'sum of array x is {z_sum: .2f} average = {z_average: .3f}')
+z_line = str(f'\nsum of array x is {z_sum: .2f} average = {z_average: .3f}')
 
 print(x_line)
 print(y_line)
 print(z_line)
+
+file = open('output-p3.txt', 'w')
+file.write(x_line)
+file.write(y_line)
+file.write(z_line)

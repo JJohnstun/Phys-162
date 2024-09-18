@@ -1,0 +1,3 @@
+sum of array x is  65.00 average =  0.500
+sum of array x is  346.42 average =  2.665
+sum of array x is  460.10 average =  3.539
