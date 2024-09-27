@@ -43,16 +43,20 @@ def t_range(θ):
 #generate range of t values
 t_in = t_range(θ)
 #generate name of curve
+'''
 curve_angle = str(f'θ ={θ0: .1f} \N{DEGREE SIGN}')
 initial_height = str(f'\nInitial Height = {y0: .1f} m')
 initial_velocity = str(f'\nInitial Velocity = {v0: .1f} m/s')
+'''
 
+
+plt.figure()
 plt.plot(
     Xpos(t_in, θ), #Collection of x values for given t
     Ypos(t_in, θ), #Collection of y values for given t
     color = 'purple',
     linestyle = '--',
-    label = curve_angle + initial_height + initial_velocity
+    label = f'θ ={θ0: .1f} \N{DEGREE SIGN} \nInitial Height = {y0: .1f} m \nInitial Velocity = {v0: .1f} m/s'
 
 )
 
