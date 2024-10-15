@@ -14,14 +14,15 @@ read list of v0's from first line of txt file, comma separated
 
 '''
 
-
+#Create needed global variables
 x0 = 0
 y0 = float(input("Please Enter the Initial Height of the Trajectory in meters: "))
-th00 = float(input("Enter initial angle in degrees: "))
-v0 = float(input("Enter initial velocity m/s: "))
-g = 9.8
-#convert angle to radians
-th0 = np.deg2rad(th00)
+th0_deg = []
+
+#v0 = np.loadtxt('v0vals.txt', unpack=True)
+g = 9.8 #gravity (m/s)
+
+'''
 
 #define functions for x position, y position, and range of projectile
 def Xpos(t,θ):
@@ -48,21 +49,45 @@ def t_range(θ):
     values = np.linspace(0, t, counter)
     return values
 
-
-def plot_traj(y0, v0, th0, tmax, color):
-    print('placeholder')
-    return
-
+#function to determine time of landing for each projectile
 def tland(y0, v0, th0):
-    t = 0
-    while Ypos(t, th0, y0, v0) > 0:
-        t +=0.005
-        continue
-    t_land = t
-    print(t_land)
+    t_land=[]
+    for each in th0:
+        t = 0
+        while Ypos(t, th0, y0, v0) > 0:
+            t +=0.01
+            continue
+        t_land[each] = t
+        print('time of landing for projectile: ' + str(t))
     return t_land
 
-test = tland(y0, v0, th0)
+
+#function that graphs given data
+def plot_traj(y0, v0, th0, tmax, color):
+    #create figure
+    plt.figure()
+
+    return
+'''
 
 
-#get input of v0 values from txt file.
+for i in range(0, len(sys.argv)):
+    #skip the index of sys.argv containing file name
+    if i == 0:
+        continue
+    #write angle command options to th0 array for later use
+    else:
+        
+        j = int(i) - 1
+        print('i=')
+        print(i)
+        print('J=')
+        print(j)
+        #th0_deg[j] = sys.argv[i]
+
+
+
+#convert angle to radians
+th0 = np.deg2rad(th0_deg)
+
+print(sys.argv)
