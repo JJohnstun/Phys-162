@@ -36,19 +36,26 @@ def Ypos(x):
     return
 
 def read_ground():
+    ground_1d = []
+    ground_2d = []
     loader = sys.argv
     ground_file = loader[1]
     #load in ground file
-    ground = np.loadtxt(ground_file)
-    ground_1d = []
-
-    for row in ground:
-        #iterate through each column:
-        for column in row:
-            ground_1d.append(column)
+    with open(ground_file, 'r') as ground:
+        for line in ground:
+            line = line.strip().split(', ')
+            ground_2d.append(line)
+            #at this point you have a 2d array of varying width with proper delimiting
+        #iterate through 2d array and flatten it
+        for row in ground_2d:
+            for column in row:
+                ground_1d.append(column)
+        
     
     
     return ground_1d
+
+
 
 test = read_ground()
 print(test)
