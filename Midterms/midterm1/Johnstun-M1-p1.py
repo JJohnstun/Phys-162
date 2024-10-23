@@ -26,14 +26,30 @@ a2y = -9.8
 
 a3x = 0.93
 a3y = 6.9
+#create arrays for reference
+ax = [0.96, -1.39, 0.93]
+ay = [3.9, -9.8, 6.9]
 
+def Xpos(t, x0, ax_index):
+    x = x0 + vel(t, ax_index, 'x' ) + 0.5*((ax[ax_index])**2)
+    return x
 
+def Ypos(t, y0, ay_index):
+    y = y0 + vel(t, ay_index, 'y') + 0.5((ay[ay_index])**2)
+    return y
 
-def Xpos(t, x0):
-    return
-
-def Ypos(x):
-    return
+def vel(t, a_index, dir):
+    
+    v0 = 0
+    
+    if dir == 'x':
+        vx = v0 + ax[a_index]*t
+        return vx
+    elif dir == 'y':
+        vy = v0 + ay[a_index]*t
+        return vy
+    else:
+        print('direction wasnt either x or y, review velocity function')
 
 def read_ground():
     ground_1d = []
