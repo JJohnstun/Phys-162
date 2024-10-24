@@ -7,39 +7,29 @@ import numpy as np
 import matplotlib.pyplot as plot
 
 #Generate some needed constants
-x0 = 0 #change later, use input
-y0 = 0 #change later, determine this from ground function
+#x0 = 0 #change later, use input
+
 
 #Using the following equations for General reference
 #position s = si + vi*t + 1/2ai(t**2)
 #velocity vi = v0 +ai(t)
 
-#acceleration constants for "engine on" part (m/s^2)
-a1x = 0.96
-a1y = 3.9
 
-#acceleration constants for "engine off" part (m/s^2)
-a2x = -1.39
-a2y = -9.8
-
-#acceleratikno constants for "landing" part (m/s*2)
-
-a3x = 0.93
-a3y = 6.9
-#create arrays for reference
+#acceleration arrays for acc. constants of each part of the rocket launch
 ax = [0.96, -1.39, 0.93]
 ay = [3.9, -9.8, 6.9]
 
-def Xpos(t, x0, ax_index):
-    x = x0 + vel(t, ax_index, 'x' ) + 0.5*((ax[ax_index])**2)
+def Xpos(t, ax_index, x0):
+    x = x0 + vel(0, ax_index, 'x' )*t + ((0.5*ax[ax_index])*(t**2))
     return x
 
+
 def Ypos(t, y0, ay_index):
-    y = y0 + vel(t, ay_index, 'y') + 0.5((ay[ay_index])**2)
+    y = y0 + vel(0, ay_index, 'y')*t + ((0.5*ax[ay_index])*(t**2))
     return y
 
+
 def vel(t, a_index, dir):
-    
     v0 = 0
     
     if dir == 'x':
@@ -67,11 +57,29 @@ def read_ground():
             for column in row:
                 ground_1d.append(column)
         
-    
-    
-    return ground_1d
+        #map array to floating type
+        ground_float = list(map(float, ground_1d))
+
+    return ground_float
+
+def ground_height(x0):
+    ground = read_ground()
+    gr_height = ground[x0]
+    return gr_height
+
+def get_x0():
+    while True:
+        try:
+            x0 = input('Please enter an initial x starting position as a whole number in meters: ')
+            x0_int = int(x0)
+        except:
+            print("What you entered was not an integer, please try again.")
+            continue
+        else:
+            return x0_int
+        
+def make_t_ranges():
 
 
 
-test = read_ground()
-print(test)
+    return
