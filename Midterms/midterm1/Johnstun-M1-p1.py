@@ -23,7 +23,6 @@ x0 = []
 y0 = []
 vx0 = [0]
 vy0 = [0]
-t_total = []
 
 def pos(t, index, dir):
     if dir == 'x':
@@ -45,6 +44,12 @@ def vel(t, a_index, dir):
         return vy
     else:
         print('direction wasnt either x or y, review velocity function')
+
+def v_mag(t, a_index):
+    vx = vel(t, a_index, 'x')
+    vy = vel(t, a_index, 'y')
+    v_mag = np.sqrt((vx**2) + (vy**2))
+    return v_mag
 
 def read_ground():
     ground_1d = []
@@ -69,7 +74,7 @@ def read_ground():
 
 def ground_height(x_input):
     ground = read_ground()
-    if x_input > len(ground):
+    if x_input >= len(ground):
         gr_height = ground[-1]
     else: 
         gr_height = ground[x_input]
@@ -112,7 +117,7 @@ def append_arrays(t_stop, ref_index):
         
 def make_t_ranges():
     #t_range for part 1 is from 0 to 76 seconds
-    t_range1 = np.linspace(0, 76, 7700)
+    t_range1 = np.linspace(0, 76, 7600)
     #append reference arrays with conditions at t=76
     append_arrays(76, 0)
 
@@ -151,11 +156,30 @@ def make_t_ranges():
 
     return t_range1, t_range2, t_range3
 
+#function desinged to take the values in make_t_ranges and generate continuous values
+#from t = 0 to t_land, as opposed from when each segment starts and stops
+def t_continuous(part1, part2, part3):
+    #take the last entry from each time array and add them together
+    #update part 2 to continue from part 1,
+    t2_new = []
+    for i in range(0, len(part2)):
+        t_new = part1[-1] + part2[i]
+        t2_new.append(t_new)
     
+    #repeat with part 3
+    t3_new = []
+    for i in range(0, len(part3)):
+        t_new = t2_new[-1] + part3[i]
+        t3_new.append(t_new)
+    return part1, t2_new, t3_new
 
-#begin plotting figure
+
+#Generate important values needed to plot figures
 get_x0_y0()
 t1, t2, t3 = make_t_ranges()
+cont1, cont2, cont3 = t_continuous(t1, t2, t3)
+time_cont = [cont1, cont2, cont3]
+
 x1 = pos(t1, 0, 'x')
 y1 = pos(t1, 0, 'y')
 x2 = pos(t2, 1, 'x')
@@ -163,49 +187,145 @@ y2 = pos(t2, 1, 'y')
 x3 = pos(t3, 2, 'x')
 y3 = pos(t3, 2, 'y')
 x_final = round(x3[-1])
-x_final += 1
 gy = []
-print(x_final)
-print(len(read_ground()))
 for x in range(0, x_final):
     gy.append(ground_height(x))
-print(len(gy))
 
+
+#create figure
 plt.figure()
+
+#create subplot for each graph
 main = plt.subplot2grid((4, 4), (0,0), rowspan=4, colspan=2)
-main.plot(
-    x1,
-    y1,
-    color = 'blue',
-    linestyle = '-',
-    label = 'test'
-)
-main.plot(
-    x2,
-    y2,
-    color = 'red',
-    label = ''
+position = plt.subplot2grid((4, 4), (0,2), rowspan=1, colspan=2)
+v_speed = plt.subplot2grid((4, 4), (1,2), rowspan=1, colspan=2)
+v_x = plt.subplot2grid((4, 4), (2,2), rowspan=1, colspan=2)
+v_y = plt.subplot2grid((4, 4), (3,2), rowspan=1, colspan=2)
 
-)
-main.plot(
-    x3,
-    y3,
-    color = 'purple',
-    label = ''
-)
+#array containing subplots handles for faster plotting
+sub_plot = [position, v_speed, v_x, v_y]
 
-main.plot(
-    np.linspace(0, x_final, x_final),
-    gy,
-    color = 'black',
-    linestyle = '-'
-)
+#common attributes across each subplot
+colors = ['red', 'blue', 'purple', 'black']
+markers = ['*', 's', 'v']
+#Main subplot features
+x_values = [x1, x2, x3, np.linspace(0, x_final, x_final)]
+y_values = [y1, y2, y3, gy]
+line_width = [1.5, 1.5, 1.5, 2.5]
+annotations = ['Engine turns off', 'Slow down', 'Landing point']
+#features for the other 4 plots
+v_mags = [v_mag(t1, 0), v_mag(t2, 1), v_mag(t3, 2)]
+v_xs = [vel(t1, 0, 'x'), vel(t2, 1, 'x'), vel(t3, 2, 'x')]
+v_ys = [vel(t1, 0, 'y'), vel(t2, 1, 'y'), vel(t3, 2, 'y')]
+t_intersections = [cont1[-1], cont2[-1], cont3[-1]]
 
+print(x0)
+print(y0)
+
+#big loop to plot all  4 graphs relatively efficiently
+for i in range(0,4):
+    point_index = i+1
+    shift_index = i-1
+    main.plot(
+        x_values[i],
+        y_values[i],
+        color = colors[i],
+        linestyle = '-',
+        linewidth = line_width[i]
+    )
+
+  
+
+    #plot the intersection points as separate command
+    #reference index of intersection points is shifted due to storing
+    #starting conditions
+    if i > 3: #if statement alleviates index error for including ground curve
+        continue
+    elif i == 0:
+        #first plot on right has two curve plots, so separate elif exists
+        for j in range(0,3):
+            #plot x(t)
+            sub_plot[i].plot(
+                time_cont[j],
+                x_values[j],
+                color = colors[j]
+            )
+            #plot y(t)
+            sub_plot[i].plot(
+                time_cont[j],
+                y_values[j],
+                color = colors[j]
+            )
+            #plot x - intersection point
+            sub_plot[i].plot(
+                t_intersections[j],
+                x0[point_index],
+                color = 'black',
+                marker = markers[j]
+            )
+            #plot y - intersection point
+            sub_plot[i].plot(
+                t_intersections[j],
+                y0[point_index],
+                color = colors[j],
+                marker = markers[j]
+            )
+
+    else:
+        
+        main.plot(
+            x0[i],
+            y0[i],
+            color = colors[shift_index],
+            marker = markers[shift_index],
+            markersize = 8.0
+        )
+        #annotate the intersection points
+        main.annotate(
+            annotations[shift_index],
+            xy = (x0[i], y0[i]),
+            xycoords = 'data',
+            xytext = (-50, +10),
+            textcoords = 'offset points',
+            fontsize = 10,
+            color = colors[shift_index]
+
+        )
+        #for each other sub plot iterate through each trajectory part and plot
+        for j in range(1,4):
+            shift_index = i-1
+            if j == 1:
+                sub_plot[j].plot(
+                    time_cont[shift_index],
+                    v_mags[shift_index],
+                    color = colors[shift_index]
+                )
+            elif j == 2:
+                sub_plot[j].plot(
+                    time_cont[shift_index],
+                    v_xs[shift_index],
+                    color = colors[shift_index]
+                )
+            elif j == 3:
+                sub_plot[j].plot(
+                    time_cont[shift_index],
+                    v_ys[shift_index],
+                    color = colors[shift_index]
+                )
+
+
+            
 main.set_xlabel('x (km)')
 main.set_ylabel('y (km)')
-tick_xvalues = [0,1000,2000,3000,4000]
+tick_xvalues = np.linspace(0, 4000, 5)
 tick_xlabel = ['0', '1.0', '2.0', '3.0', '4.0']
+tick_yvalues = np.linspace(0, 16000, 9)
+tick_ylabel = ['0', '2.0', '4.0', '6.0', '8.0', '10.0', '12.0', '14.0', '16.0']
 
 main.set_xticks(tick_xvalues, tick_xlabel)
+main.set_yticks(tick_yvalues, tick_ylabel)
+main.set_xlim(0)
+
+plt.tight_layout()
 plt.savefig("JaredJohnstun_M1_p1_fig.pdf")
 plt.show()
