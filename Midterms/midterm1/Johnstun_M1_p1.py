@@ -54,6 +54,10 @@ def v_mag(t, a_index):
 def read_ground():
     ground_1d = []
     ground_2d = []
+    loader = ''
+    if len(sys.argv) < 2:
+        return np.zeros(5)
+    
     loader = sys.argv
     ground_file = loader[1]
     #load in ground file
@@ -106,14 +110,6 @@ def append_arrays(t_stop, ref_index):
     y0.append(y_inter1)
     vx0.append(vx_inter1)
     vy0.append(vy_inter1)
-    '''
-    #print the values for my own reference
-    print('time passed through phase = ' + str(t_stop))
-    print(x0)
-    print(y0)
-    print(vx0)
-    print(vy0)
-    '''
         
 def make_t_ranges():
     #t_range for part 1 is from 0 to 76 seconds
@@ -173,12 +169,22 @@ def t_continuous(part1, part2, part3):
         t3_new.append(t_new)
     return part1, t2_new, t3_new
 
+def did_you_crash(velocity):
+    if velocity < 5:
+        return 'smooth landing, looking good'
+    elif velocity < 25:
+        return 'rough landing, you lived to tell the tale'
+    else:
+        return 'epic crash, you will be remembered.'
 
+if len(sys.argv) < 2:
+    print('ground file not specified, default values being used')
 #Generate important values needed to plot figures
 get_x0_y0()
 t1, t2, t3 = make_t_ranges()
 cont1, cont2, cont3 = t_continuous(t1, t2, t3)
 time_cont = [cont1, cont2, cont3]
+#time_cont_inter = [t1[-1], t2[-1], t3[-1]]
 
 x1 = pos(t1, 0, 'x')
 y1 = pos(t1, 0, 'y')
@@ -213,26 +219,41 @@ x_values = [x1, x2, x3, np.linspace(0, x_final, x_final)]
 y_values = [y1, y2, y3, gy]
 line_width = [1.5, 1.5, 1.5, 2.5]
 annotations = ['Engine turns off', 'Slow down', 'Landing point']
+part_labels = ['Engine on, ', 'Engine off, ', 'Slowing down, ']
+annot_locations = ['right', 'left', 'left']
 #features for the other 4 plots
 v_mags = [v_mag(t1, 0), v_mag(t2, 1), v_mag(t3, 2)]
+v_mag_points = [v_mag(t1[-1], 0), v_mag(t2[-1], 1), v_mag(t3[-1], 2)]
 v_xs = [vel(t1, 0, 'x'), vel(t2, 1, 'x'), vel(t3, 2, 'x')]
 v_ys = [vel(t1, 0, 'y'), vel(t2, 1, 'y'), vel(t3, 2, 'y')]
 t_intersections = [cont1[-1], cont2[-1], cont3[-1]]
 
-print(x0)
-print(y0)
 
 #big loop to plot all  4 graphs relatively efficiently
 for i in range(0,4):
     point_index = i+1
     shift_index = i-1
-    main.plot(
-        x_values[i],
-        y_values[i],
-        color = colors[i],
-        linestyle = '-',
-        linewidth = line_width[i]
-    )
+    graph_label = ''
+    if i == 3: #if statement to exclude legend from ground line
+        graph_label = ''
+        main.plot(
+            x_values[i],
+            y_values[i],
+            color = colors[i],
+            linestyle = '-',
+            linewidth = line_width[i],
+            label = graph_label
+        )
+    else:
+        graph_label = part_labels[i] + r'$\vec{a}$''= ('f'${ax[i]},{ay[i]} ) m/s^{2}$'
+        main.plot(
+            x_values[i],
+            y_values[i],
+            color = colors[i],
+            linestyle = '-',
+            linewidth = line_width[i],
+            label = graph_label
+        )
 
   
 
@@ -244,11 +265,13 @@ for i in range(0,4):
     elif i == 0:
         #first plot on right has two curve plots, so separate elif exists
         for j in range(0,3):
+            skip_index = j+1
             #plot x(t)
             sub_plot[i].plot(
                 time_cont[j],
                 x_values[j],
-                color = colors[j]
+                color = colors[j],
+                linestyle = 'dashdot'
             )
             #plot y(t)
             sub_plot[i].plot(
@@ -259,14 +282,14 @@ for i in range(0,4):
             #plot x - intersection point
             sub_plot[i].plot(
                 t_intersections[j],
-                x0[point_index],
-                color = 'black',
+                x0[skip_index],
+                color = colors[j],
                 marker = markers[j]
             )
             #plot y - intersection point
             sub_plot[i].plot(
                 t_intersections[j],
-                y0[point_index],
+                y0[skip_index],
                 color = colors[j],
                 marker = markers[j]
             )
@@ -278,19 +301,19 @@ for i in range(0,4):
             y0[i],
             color = colors[shift_index],
             marker = markers[shift_index],
-            markersize = 8.0
+            markersize = 5.0
         )
         #annotate the intersection points
-        main.annotate(
+        main.text(
+            x0[i],
+            y0[i],
             annotations[shift_index],
-            xy = (x0[i], y0[i]),
-            xycoords = 'data',
-            xytext = (-50, +10),
-            textcoords = 'offset points',
+            ha = annot_locations[shift_index],
+            va = 'bottom',
             fontsize = 10,
             color = colors[shift_index]
-
         )
+
         #for each other sub plot iterate through each trajectory part and plot
         for j in range(1,4):
             shift_index = i-1
@@ -300,32 +323,73 @@ for i in range(0,4):
                     v_mags[shift_index],
                     color = colors[shift_index]
                 )
+                #plot the intersection point of relevance
+                sub_plot[j].plot(
+                    t_intersections[shift_index],
+                    v_mag_points[shift_index],
+                    color = colors[shift_index],
+                    marker = markers[shift_index]
+                )
+                
             elif j == 2:
                 sub_plot[j].plot(
                     time_cont[shift_index],
                     v_xs[shift_index],
-                    color = colors[shift_index]
+                    color = colors[shift_index],
+                    linestyle = '--'
                 )
+                #plot the relevant intersection point:
+                sub_plot[j].plot(
+                    t_intersections[shift_index],
+                    vx0[i],
+                    color = colors[shift_index],
+                    marker = markers[shift_index]
+                )
+
             elif j == 3:
                 sub_plot[j].plot(
                     time_cont[shift_index],
                     v_ys[shift_index],
-                    color = colors[shift_index]
+                    color = colors[shift_index],
+                    linestyle = ':'
+                )
+                sub_plot[j].plot(
+                    t_intersections[shift_index],
+                    vy0[i],
+                    color = colors[shift_index],
+                    marker = markers[shift_index]
                 )
 
+    #tweak some common subplot settings:
+    sub_plot[i].set_xlim(0)
+    sub_plot[i].set_xlabel('t (min)')
+    sub_plot[i].set_xticks(np.linspace(0, 180, 7), np.linspace(0, 3, 7))
+    sub_plot[i].spines['right'].set_visible(False)
+    sub_plot[i].spines['top'].set_visible(False)
 
             
 main.set_xlabel('x (km)')
 main.set_ylabel('y (km)')
 tick_xvalues = np.linspace(0, 4000, 5)
-tick_xlabel = ['0', '1.0', '2.0', '3.0', '4.0']
+tick_xlabel = np.linspace(0, 4, 5)
 tick_yvalues = np.linspace(0, 16000, 9)
-tick_ylabel = ['0', '2.0', '4.0', '6.0', '8.0', '10.0', '12.0', '14.0', '16.0']
+tick_ylabel = np.linspace(0, 16, 9)
 
 main.set_xticks(tick_xvalues, tick_xlabel)
 main.set_yticks(tick_yvalues, tick_ylabel)
 main.set_xlim(0)
+main.legend().set_loc('upper left')
 
+#tweak unique settings in each subplot
+sub_plot[0].set_yticks(np.linspace(0, 12000, 3), np.linspace(0, 12, 3))
+sub_plot[2].spines['bottom'].set_position(('data', 0))
+sub_plot[3].spines['bottom'].set_position(('data', 0))
+sub_y_labels = ['position (km)', 'v (m/s)', '$v_x$ (m/s)', '$v_y$ (m/s)']
+for each in range(0,4):
+    sub_plot[each].set_ylabel(sub_y_labels[each])
+
+landing_message = did_you_crash(v_mag(t3[-1], 2))
+print(landing_message)
 plt.tight_layout()
 plt.savefig("JaredJohnstun_M1_p1_fig.pdf")
 plt.show()
