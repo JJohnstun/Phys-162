@@ -10,6 +10,7 @@ time = np.loadtxt('freq - 40000 - trans.txt', skiprows=1, usecols=0)
 Vr = np.loadtxt('freq - 40000 - trans.txt', skiprows=1, usecols=2)
 Vc = np.loadtxt('freq - 40000 - trans.txt', skiprows=1, usecols=3)
 Vl = np.loadtxt('freq - 40000 - trans.txt', skiprows=1, usecols=4)
+Vd = np.loadtxt('freq - 40000 - trans.txt', skiprows=1, usecols=1)
 y_values = [Vr, Vc, Vl]
 colors = ['blue', 'red', 'green']
 
@@ -34,4 +35,17 @@ for i in range(0,2):
         color = colors[i],
         linestyle = '-'
     )
+
+volt_trans.plot(
+    time,
+    Vd,
+    color = 'black',
+    linestyle = '-'
+)
+volt_trans.plot(
+    time,
+    Vr,
+    color = 'green',
+    linestyle = '-'
+)
 plt.show()

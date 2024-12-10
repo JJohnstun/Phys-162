@@ -8,7 +8,6 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-#include <vector>
 #include <sstream>
 
 using namespace std;
@@ -32,7 +31,6 @@ float q = 0.;
 
 //declare other needed quantities
 const double pi = std::acos(-1);
-std::vector<float> ODEVector(3, 0);
 
 
 float Vd(float t0) {
@@ -52,7 +50,7 @@ float Vc(float q0) {
 
 
 float f(float t0, float q0, float i0 ) {
-    float di = (Vd(t0) - (q0/C) - (R*i0)/H);
+    float di = ((Vd(t0) - (q0/C) - (R*i0))/H);
     return di;
 }
 
@@ -60,7 +58,6 @@ void ODE2step(float t0, float q0, float i0, float dt) {
     t = t0 + dt;
     q = q0 + (dt*i0);
     i = i0 + dt*f(t0, q0, i0);
-    ODEVector = {t, q, i};
 }
 
 void solveODE(float t0){
