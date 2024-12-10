@@ -23,7 +23,7 @@ x0 = []
 y0 = []
 vx0 = [0]
 vy0 = [0]
-
+#function to provide component of position
 def pos(t, index, dir):
     if dir == 'x':
         x = x0[index] + vel(0, index, 'x' )*t + ((0.5*ax[index])*(t**2))
@@ -33,7 +33,7 @@ def pos(t, index, dir):
         y = y0[index] + vel(0, index, 'y')*t + ((0.5*ay[index])*(t**2))
         return y
 
-
+#function to provide components of velocity
 def vel(t, a_index, dir):
     
     if dir == 'x':
@@ -45,12 +45,14 @@ def vel(t, a_index, dir):
     else:
         print('direction wasnt either x or y, review velocity function')
 
+#function to provide the magnitude of velocity
 def v_mag(t, a_index):
     vx = vel(t, a_index, 'x')
     vy = vel(t, a_index, 'y')
     v_mag = np.sqrt((vx**2) + (vy**2))
     return v_mag
 
+#function that either reads ground file or provides default values
 def read_ground():
     ground_1d = []
     ground_2d = []
@@ -76,6 +78,7 @@ def read_ground():
 
     return ground_float
 
+#function that returns the ground height
 def ground_height(x_input):
     ground = read_ground()
     if x_input >= len(ground):
@@ -85,6 +88,7 @@ def ground_height(x_input):
     
     return gr_height
 
+#function to get initial conditions out of the user
 def get_x0_y0():
     while True:
         try:
@@ -99,6 +103,7 @@ def get_x0_y0():
             y0.append(ground_height(x00_int))
             break
 
+#function to append values to initial condition arrays
 def append_arrays(t_stop, ref_index):
     #generate values needed for appending
     x_inter1 = pos(t_stop, ref_index, 'x')
@@ -110,7 +115,8 @@ def append_arrays(t_stop, ref_index):
     y0.append(y_inter1)
     vx0.append(vx_inter1)
     vy0.append(vy_inter1)
-        
+
+#function to generate t-values for plotting        
 def make_t_ranges():
     #t_range for part 1 is from 0 to 76 seconds
     t_range1 = np.linspace(0, 76, 7600)
@@ -169,6 +175,7 @@ def t_continuous(part1, part2, part3):
         t3_new.append(t_new)
     return part1, t2_new, t3_new
 
+#function to make return print message
 def did_you_crash(velocity):
     if velocity < 5:
         return 'smooth landing, looking good'
