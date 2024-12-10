@@ -24,6 +24,8 @@ const float H = 0.0205;
 const float Vd0 = 1.3;
 const float freq = 40000;
 
+//as a note the resonance freq should be 55,579.31698843
+
 //declare circuit-relevant constants
 float t = 0.;
 float i = 0.;
@@ -35,6 +37,11 @@ const double pi = std::acos(-1);
 
 float Vd(float t0) {
     float V = Vd0*sin(2*pi*freq*t0);
+    /* used for testing
+    cout << pi << std::endl;
+    cout << freq << std::endl;
+    cout << sin(2*pi*freq*t0) << std::endl;
+    */
     return V;
 }
 
@@ -48,6 +55,10 @@ float Vc(float q0) {
     return vc;
 }
 
+float Vl(float t0, float q0, float i0){
+    float vl = (Vd(t0) - Vr(i0) - Vc(q0));
+    return vl;
+}
 
 float f(float t0, float q0, float i0 ) {
     float di = ((Vd(t0) - (q0/C) - (R*i0))/H);
@@ -55,9 +66,9 @@ float f(float t0, float q0, float i0 ) {
 }
 
 void ODE2step(float t0, float q0, float i0, float dt) {
-    t = t0 + dt;
-    q = q0 + (dt*i0);
-    i = i0 + dt*f(t0, q0, i0);
+    t = t0 + dt; //increment time
+    q = q0 + (dt*i0); //increment charge using inital current (first derivative)
+    i = i0 + dt*f(t0, q0, i0); //increment current using second derivative
 }
 
 void solveODE(float t0){
@@ -80,7 +91,7 @@ void solveODE(float t0){
         //For the first 6 periods, write to the transient file
         if (j<=600) {
             dataOut << std::setprecision(15) << std::fixed << std::left << std::setw(20)<< t << std::setw(20) << Vd(t) << std::setw(20)
-                    << Vr(i) << std::setw(20) << Vc(q) << std::setw(20) << f(t, q, i) << std::endl;
+                    << Vr(i) << std::setw(20) << Vc(q) << std::setw(20) << Vl(t, q, i) << std::endl;
         
         } else if (j == 601) { // after 6th period close the transient file and open the steady file
             dataOut.close();
@@ -95,9 +106,9 @@ void solveODE(float t0){
                     << "VL" << std::endl;
 
 
-        } else if (j>=5400) { //write to the steady file
+        } else if (j>=5500) { //write to the steady file
             dataOut << std::setprecision(15) << std::fixed << std::left << std::setw(20)<< t << std::setw(20) << Vd(t) << std::setw(20)
-                    << Vr(i) << std::setw(20) << Vc(q) << std::setw(20) << f(t, q, i) << std::endl;
+                    << Vr(i) << std::setw(20) << Vc(q) << std::setw(20) << Vl(t, q, i) << std::endl;
         }
         ODE2step(t, q, i, dt0);
 
